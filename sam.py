@@ -64,17 +64,21 @@ def segment(Image):
     coef = real_coin_size / coin_size
     print('coef = ', coef)
     baby_length = calculate_bbox_from_mask(masks[0])[1]*coef
+    right_hand = get_input_point(Image)[3]*coef
+    left_hand = get_input_point(Image)[2]*coef
+    right_foot = get_input_point(Image)[5]*coef
+    left_foot = get_input_point(Image)[4]*coef
     print('panjang bayi = ',baby_length)
 
     matplotlib.use('TkAgg')
     # print(calculate_bbox_from_mask(masks[0]))
     plt.figure(figsize=(10,10))
     plt.imshow(get_input_point(Image)[1])
-    show_points(input_point, input_label, plt.gca())
+    # show_points(input_point, input_label, plt.gca())
     show_box(calculate_bbox_from_mask(masks[0])[0], plt.gca())
     show_box(detect(Image)[1], plt.gca())
-    plt.title(f"Panjang Bayi: {baby_length:.3f} cm", fontsize=18)
+    plt.title(f"Panjang Bayi: {baby_length:.2f} cm, \nPanjang Lengan Kanan: {right_hand:.2f} cm, Panjang Lengan Kiri: {left_hand:.2f} cm , \nPanjang Kaki Kanan: {right_foot:.2f} cm, Panjang Kaki Kiri: {left_foot:.2f} cm", fontsize=18)
     plt.axis('on')
     plt.show()  
 
-segment("images/baby5-side.jpeg")
+segment("images/baby5-up.jpeg")

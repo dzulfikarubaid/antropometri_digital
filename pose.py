@@ -6,7 +6,7 @@ from mediapipe.framework.formats import landmark_pb2
 import mediapipe as mp
 import numpy as np
 import matplotlib.pyplot as plt
-
+import math
 
 def draw_landmarks_on_image(rgb_image, detection_result):
   pose_landmarks_list = detection_result.pose_landmarks
@@ -28,38 +28,45 @@ def draw_landmarks_on_image(rgb_image, detection_result):
       solutions.drawing_styles.get_default_pose_landmarks_style())
   return annotated_image
 
+def calculate_distance(x1, y1, x2, y2):
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
 def get_input_point(image):
-  # STEP 2: Create an PoseLandmarker object.
   base_options = python.BaseOptions(model_asset_path='model/pose_landmarker_lite.task')
   options = vision.PoseLandmarkerOptions(
       base_options=base_options,
       output_segmentation_masks=True)
   detector = vision.PoseLandmarker.create_from_options(options)
-
-  # STEP 3: Load the input image.
   image = mp.Image.create_from_file(image)
 
-  # STEP 4: Detect pose landmarks from the input image.
   detection_result = detector.detect(image)
   pose_landmarks = detection_result.pose_landmarks
-
-  # Iterate through the pose_landmarks list
+  print(pose_landmarks)
   nose = pose_landmarks[0][0]
+  right_shoulder = pose_landmarks[0][12]
+  right_elbow = pose_landmarks[0][14]
+  right_wrist = pose_landmarks[0][16]
+  left_shoulder = pose_landmarks[0][11]
+  left_elbow = pose_landmarks[0][13]
+  left_wrist = pose_landmarks[0][15]
   left_hip = pose_landmarks[0][23]
+  left_knee = pose_landmarks[0][25]
+  left_ankle = pose_landmarks[0][27]
+  right_hip = pose_landmarks[0][24]
+  right_knee = pose_landmarks[0][26]
+  right_ankle = pose_landmarks[0][28]
+  
+  right_hand = calculate_distance(right_shoulder.x*image.width, right_shoulder.y*image.height, right_elbow.x*image.width, right_elbow.y*image.height) + calculate_distance(right_elbow.x*image.width, right_elbow.y*image.height, right_wrist.x*image.width, right_wrist.y*image.height)
+
+  left_hand = calculate_distance(left_shoulder.x*image.width, left_shoulder.y*image.height, left_elbow.x*image.width, left_elbow.y*image.height) + calculate_distance(left_elbow.x*image.width, left_elbow.y*image.height, left_wrist.x*image.width, left_wrist.y*image.height)
+
+  right_foot = calculate_distance(right_hip.x*image.width, right_hip.y*image.height, right_knee.x*image.width, right_knee.y*image.height) + calculate_distance(right_knee.x*image.width, right_knee.y*image.height, right_ankle.x*image.width, right_ankle.y*image.height)
+
+  left_foot = calculate_distance(left_hip.x*image.width, left_hip.y*image.height, left_knee.x*image.width, left_knee.y*image.height) + calculate_distance(left_knee.x*image.width, left_knee.y*image.height, left_ankle.x*image.width, left_ankle.y*image.height)
 
   coords = np.array([[nose.x*image.width,nose.y*image.height], [left_hip.x*image.width,left_hip.y*image.height]])
-  
-  
-  # x=0.4872474670410156, y=0.21048790216445923
 
-  # STEP 5: Process the detection result. In this case, visualize it.
   annotated_image = draw_landmarks_on_image(image.numpy_view(), detection_result)
-
-  # Convert BGR to RGB
- 
-
- 
-
   segmentation_mask = detection_result.segmentation_masks[0].numpy_view()
   visualized_mask = np.repeat(segmentation_mask[:, :, np.newaxis], 3, axis=2) * 255
   # cv2.imshow('Visualized Mask',visualized_mask)
@@ -70,6 +77,7 @@ def get_input_point(image):
   # plt.title(f"Mediapipe Result")
   # plt.axis('on')
   # plt.show()  
-  return coords, annotated_image
+  return coords, annotated_image, left_hand, right_hand, left_foot, right_foot
 
-# print(get_input_point('images/avatar2.jpg'))
+print(get_input_point('images/avatar2.jpg'))
+# get_input_point('images/baby5-up.jpeg')

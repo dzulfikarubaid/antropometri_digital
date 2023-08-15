@@ -41,7 +41,7 @@ def get_input_point(image):
 
   detection_result = detector.detect(image)
   pose_landmarks = detection_result.pose_landmarks
-  print(pose_landmarks)
+  
   nose = pose_landmarks[0][0]
   right_shoulder = pose_landmarks[0][12]
   right_elbow = pose_landmarks[0][14]
@@ -79,5 +79,5 @@ def get_input_point(image):
   # plt.show()  
   return coords, annotated_image, left_hand, right_hand, left_foot, right_foot
 
-print(get_input_point('images/avatar2.jpg'))
+# print(get_input_point('images/avatar2.jpg'))
 # get_input_point('images/baby5-up.jpeg')

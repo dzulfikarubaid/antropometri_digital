@@ -59,16 +59,16 @@ def segment(Image):
     masks.shape  # (number_of_masks) x H x W
     # (number_of_masks) x H x W
     coin_size = detect(Image)[2]
-    print('coin size = ',coin_size)
+    # print('coin size = ',coin_size)
     real_coin_size = 2.7
     coef = real_coin_size / coin_size
-    print('coef = ', coef)
+    # print('coef = ', coef)
     baby_length = calculate_bbox_from_mask(masks[0])[1]*coef
     right_hand = get_input_point(Image)[3]*coef
     left_hand = get_input_point(Image)[2]*coef
     right_foot = get_input_point(Image)[5]*coef
     left_foot = get_input_point(Image)[4]*coef
-    print('panjang bayi = ',baby_length)
+    # print('panjang bayi = ',baby_length)
 
     matplotlib.use('TkAgg')
     # print(calculate_bbox_from_mask(masks[0]))
@@ -81,4 +81,4 @@ def segment(Image):
     plt.axis('on')
     plt.show()  
 
-segment("images/baby5-up.jpeg")
+segment("images/avatar2.jpg")
